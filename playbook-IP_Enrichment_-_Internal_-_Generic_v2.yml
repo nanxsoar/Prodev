@@ -2,7 +2,7 @@ contentitemexportablefields:
   contentitemfields:
     definitionid: ""
     fromServerVersion: 5.0.0
-    itemVersion: 2.4.35
+    itemVersion: 2.6.15
     packID: CommonPlaybooks
     packName: Common Playbooks
     packPropagationLabels:
@@ -15,7 +15,7 @@ description: |-
 
   - Resolve IP address to hostname (DNS)
   - Separate internal and external IP addresses
-  - Get host information for IP addresses
+  - Get host information for IP addresses.
 id: IP Enrichment - Internal - Generic v2
 inputs:
 - description: The IP address to enrich.
@@ -46,13 +46,33 @@ inputs:
   required: true
   value:
     simple: "True"
+- description: |-
+    Whether to execute common logic, like the classification of IP addresses to ranges and resolving, in the the main (IP Enrichment - Generic v2) enrichment playbook, instead of in the sub-playbooks.
+
+    Possible values are: True, False.
+    Setting this to True will execute the relevant commands in the main playbook instead of executing them in both sub-playbooks.
+
+    Set this to True in the parent playbook if you are using the parent playbook, as opposed to using the sub-playbooks directly in your playbooks, as this will improve the performance of the playbook and reduce the overfall size of the incident.
+  key: ExecutedFromParent
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "False"
+- description: Hostnames to enrich. If the ExecutedFromParent playbook is set to True
+    in the IP - Enrichment - Generic v2 playbook, and an internal IP resolves to an
+    endpoint hostname that you want to enrich, the hostnames defined here will be
+    used.
+  key: Hostnames
+  playbookInputQuery: null
+  required: false
+  value: {}
 name: IP Enrichment - Internal - Generic v2
 outputs:
 - contextPath: IP
   description: The IP objects.
   type: unknown
 - contextPath: DBotScore
-  description: Indicator, Score, Type and Vendor
+  description: Indicator, Score, Type and Vendor.
   type: unknown
 - contextPath: Endpoint
   description: The endpoint's object.
@@ -543,10 +563,10 @@ outputs:
   description: The score.
   type: string
 - contextPath: IP.Address
-  description: The IP Address
+  description: The IP address.
   type: string
 - contextPath: IP.InRange
-  description: Is the IP is in the input ranges? (could be 'yes' or 'no)
+  description: Is the IP in the input ranges? (could be 'yes' or 'no).
   type: string
 starttaskid: "0"
 system: true
@@ -603,8 +623,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 170,
-          "y": 1490
+          "x": 1010,
+          "y": 1770
         }
       }
   "26":
@@ -615,7 +635,7 @@ tasks:
     isoversize: false
     nexttasks:
       '#none#':
-      - "35"
+      - "43"
     note: false
     quietmode: 0
     separatecontext: false
@@ -633,8 +653,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 450,
-          "y": 1030
+          "x": 170,
+          "y": 1430
         }
       }
   "28":
@@ -644,8 +664,27 @@ tasks:
             iscontext: true
             value:
               simple: inputs.IP
-          operator: isExists
-      label: "yes"
+          operator: isNotEmpty
+          right:
+            value: {}
+      - - ignorecase: true
+          left:
+            iscontext: true
+            value:
+              simple: inputs.ExecutedFromParent
+          operator: isEqualString
+          right:
+            value:
+              simple: "True"
+      label: "Yes"
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.IP
+          operator: isNotEmpty
+      label: "No"
     continueonerrortype: ""
     id: "28"
     ignoreworker: false
@@ -654,21 +693,23 @@ tasks:
     nexttasks:
       '#default#':
       - "41"
-      "yes":
-      - "40"
+      "No":
+      - "44"
+      "Yes":
+      - "26"
     note: false
-    quietmode: 0
+    quietmode: 2
     separatecontext: false
     skipunavailable: false
     task:
       brand: ""
       description: Checks whether the playbook's input contains at least one IP address.
-      id: f52523d0-362f-4f1e-8c16-443889e17ff1
+      id: cd79c4ac-4dec-4872-8ec8-35079ffe9e5d
       iscommand: false
-      name: Are there IP addresses?
+      name: Are the IPs already classified?
       type: condition
       version: -1
-    taskid: f52523d0-362f-4f1e-8c16-443889e17ff1
+    taskid: cd79c4ac-4dec-4872-8ec8-35079ffe9e5d
     timertriggers: []
     type: condition
     view: |-
@@ -698,9 +739,9 @@ tasks:
     isoversize: false
     nexttasks:
       '#default#':
-      - "24"
-      "yes":
       - "26"
+      "yes":
+      - "35"
     note: false
     quietmode: 0
     separatecontext: false
@@ -708,19 +749,19 @@ tasks:
     task:
       brand: ""
       description: Checks whether the ResolveIP parameter is set to "True".
-      id: 22936bea-a0fc-4095-8fb7-9d74fa41159e
+      id: 8556e257-fee3-46d6-8e63-e06c38c3b7af
       iscommand: false
       name: Resolve the IP address?
       type: condition
       version: -1
-    taskid: 22936bea-a0fc-4095-8fb7-9d74fa41159e
+    taskid: 8556e257-fee3-46d6-8e63-e06c38c3b7af
     timertriggers: []
     type: condition
     view: |-
       {
         "position": {
-          "x": 170,
-          "y": 850
+          "x": 720,
+          "y": 1020
         }
       }
   "35":
@@ -731,7 +772,7 @@ tasks:
     isoversize: false
     nexttasks:
       '#none#':
-      - "43"
+      - "26"
     note: false
     quietmode: 0
     reputationcalc: 2
@@ -777,8 +818,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 450,
-          "y": 1160
+          "x": 720,
+          "y": 1210
         }
       }
   "39":
@@ -813,7 +854,7 @@ tasks:
     isoversize: false
     nexttasks:
       '#default#':
-      - "41"
+      - "24"
       "yes":
       - "34"
     note: false
@@ -834,8 +875,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 170,
-          "y": 670
+          "x": 720,
+          "y": 840
         }
       }
   "40":
@@ -880,8 +921,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 170,
-          "y": 510
+          "x": 720,
+          "y": 680
         }
       }
   "41":
@@ -910,8 +951,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": -260,
-          "y": 850
+          "x": -580,
+          "y": 855
         }
       }
   "43":
@@ -946,7 +987,41 @@ tasks:
                   simple: inputs.IP
           root: Endpoint
           transformers:
+          - args:
+              item:
+                iscontext: true
+                value:
+                  simple: inputs.Hostnames
+              raw: {}
+            operator: AppendIfNotEmpty
           - operator: uniq
+      IPAddress:
+        complex:
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: IP.InRange
+              operator: isEqualString
+              right:
+                value:
+                  simple: "yes"
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: IP.Address
+              operator: in
+              right:
+                iscontext: true
+                value:
+                  simple: inputs.IP
+          root: IP.Address
+          transformers:
+          - operator: uniq
+      UseReputationCommand:
+        simple: "True"
     separatecontext: true
     skipunavailable: false
     task:
@@ -962,38 +1037,66 @@ tasks:
         - ExtraHop Reveal(x)
         - Cortex XDR / Core (endpoint enrichment, reputation and risk)
         - Endpoint reputation using !endpoint command.
-      id: 0434e878-9f2b-4801-8506-6e365f2d1470
+      id: 955e1140-bb51-446f-86e3-754d5119635b
       iscommand: false
       name: Endpoint Enrichment - Generic v2.1
       playbookId: Endpoint Enrichment - Generic v2.1
       type: playbook
       version: -1
-    taskid: 0434e878-9f2b-4801-8506-6e365f2d1470
+    taskid: 955e1140-bb51-446f-86e3-754d5119635b
     timertriggers: []
     type: playbook
     view: |-
       {
         "position": {
-          "x": 450,
-          "y": 1320
+          "x": 170,
+          "y": 1570
+        }
+      }
+  "44":
+    continueonerrortype: ""
+    id: "44"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "40"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 7be14457-6daf-4880-8ab7-ddc7d9c5f5ea
+      iscommand: false
+      name: Classify & Resolve IPs
+      type: title
+      version: -1
+    taskid: 7be14457-6daf-4880-8ab7-ddc7d9c5f5ea
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 720,
+          "y": 540
         }
       }
 version: -1
 view: |-
   {
     "linkLabelsPosition": {
-      "28_40_yes": 0.6,
-      "28_41_#default#": 0.32,
-      "34_24_#default#": 0.5,
-      "34_26_yes": 0.32,
-      "39_34_yes": 0.47,
-      "39_41_#default#": 0.5
+      "28_26_Yes": 0.17,
+      "28_41_#default#": 0.27,
+      "34_26_#default#": 0.41,
+      "39_34_yes": 0.47
     },
     "paper": {
       "dimensions": {
-        "height": 1356,
-        "width": 1090,
-        "x": -260,
+        "height": 1636,
+        "width": 1970,
+        "x": -580,
         "y": 199
       }
     }
