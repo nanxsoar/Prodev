@@ -263,7 +263,7 @@ contentitemexportablefields:
   contentitemfields:
     definitionid: ""
     fromServerVersion: 5.0.0
-    itemVersion: 2.1.14
+    itemVersion: 2.1.22
     packID: PAN-OS
     packName: PAN-OS by Palo Alto Networks
     packPropagationLabels:
@@ -276,28 +276,29 @@ defaultmapperin: Panorama Mapper
 description: Manage Palo Alto Networks Firewall and Panorama. Use this pack to manage
   Prisma Access through Panorama. For more information, see the Panorama documentation.
 detaileddescription: "The integration uses the Panorama XML API.\nTo obtain an API
-  Key, run the following REST command and copy the key:\nhttps://[PanoramaIP]/api/?type=keygen&user=[user]&password=[password]\n\nFor
-  more information, visit the [Palo Alto Networks documentation](https://docs.paloaltonetworks.com/panorama).\n\n---\nYou
-  need to create a separate integration instance for Palo Alto Networks Firewall and
-  Palo Alto Networks. Unless specified otherwise, all commands are valid for both
-  Firewall and Panorama.\n\n---\n### Firewall: Configure the vsys\n- The vsys is located
-  in the Firewall URL; e.g., https://<server>#device::<vsys>::device/setup\n\n###
-  Panorama: Configure a device group\n- Access the Panorama UI.\n- Go to **Panorama**
-  > **Device Groups**.\n- Choose a device group name.\n\n---\n### Fetch Incidents\nThe
-  Panorama integration now supports fetch incidents.\nThe incidents are fetched according
-  to a number of different optional log type queries. The log types are: **Traffic,
-  Threat, URL, Data, Correlation, System, Wildfire, Decryption**.\n\n\n##### Max incidents
-  per fetch\nThe max incidents per fetch parameter specifies the maximum number of
-  incidents to fetch **per** Log Type Query.\n\n##### Log Type \nThe queries that
-  will be included during the fetch are decided according to the \"Log Type\" parameter
-  (Multiple select dropdown).\n- Selecting \"All\" will use all the log type queries
-  in the fetch.\n- To choose a specific set of queries, select their log types from
-  the dropdown (make sure \"All\" option is unselected).\n\n##### Log Type Query\n-
-  Each log type has its own query field in the instance configuration. \n- Note that
-  the default query values has some example text in it, make sure to enter a valid
-  query.\n  \n##### Log Type Query Examples\n\n| Log Type            | Query Example
-  \                                                                                                                                          |\n|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|\n|
-  Traffic             | (addr.src in {source}) and (addr.dst in {destination}) and
+  Key, run the following REST command and copy the key:\nhttps://[PanoramaIP]/api/?type=keygen&user=[user]&password=[password]\n
+  \nFor more information, visit the [Palo Alto Networks documentation](https://docs.paloaltonetworks.com/panorama).\n
+  \n---\nYou need to create a separate integration instance for Palo Alto Networks
+  Firewall and Palo Alto Networks. Unless specified otherwise, all commands are valid
+  for both Firewall and Panorama.\n\n---\n### Firewall: Configure the vsys\n- The
+  vsys is located in the Firewall URL; e.g., https://<server>#device::<vsys>::device/setup\n
+  \n### Panorama: Configure a device group\n- Access the Panorama UI.\n- Go to **Panorama**
+  > **Device Groups**.\n- Choose a device group name.\n\n---\n### Fetch Incidents\n
+  The Panorama integration now supports fetch incidents.\nThe incidents are fetched
+  according to a number of different optional log type queries. The log types are:
+  **Traffic, Threat, URL, Data, Correlation, System, Wildfire, Decryption**.\n\n\n
+  ##### Max incidents per fetch\nThe max incidents per fetch parameter specifies the
+  maximum number of incidents to fetch **per** Log Type Query.\n\n##### Log Type \n
+  The queries that will be included during the fetch are decided according to the
+  \"Log Type\" parameter (Multiple select dropdown).\n- Selecting \"All\" will use
+  all the log type queries in the fetch.\n- To choose a specific set of queries, select
+  their log types from the dropdown (make sure \"All\" option is unselected).\n\n
+  ##### Log Type Query\n- Each log type has its own query field in the instance configuration.
+  \n- Note that the default query values has some example text in it, make sure to
+  enter a valid query.\n  \n##### Log Type Query Examples\n\n| Log Type            |
+  Query Example                                                                                                                                           |\n
+  |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|\n
+  | Traffic             | (addr.src in {source}) and (addr.dst in {destination}) and
   (action eq {action})                                                                         |\n|
   Threat              | (severity geq high)                                                                                                                                     |\n|
   URL                 | ((action eq block-override) or (action eq block-url)) and
@@ -306,15 +307,15 @@ detaileddescription: "The integration uses the Panorama XML API.\nTo obtain an A
   or (action eq forward)) and (severity geq high)                                               |\n|
   Correlation         | (hostid eq {host_id}) and (match_time in {last_x_time}) and
   (objectname eq {object_name}) and (severity geq '{severity}') and (src in {source_address})
-  |\n| System              | (subtype eq {sub_type}) and (severity geq {severity})
+  |\n | System              | (subtype eq {sub_type}) and (severity geq {severity})
   \                                                                                                  |\n|
   Wildfire Submission | ((action eq wildfire-upload-fail) or (action eq wildfire-upload-skip)
   or (action eq sinkhole))                                                          |\n|
   Decryption          | (app eq {application}) and (policy_name geq {policy_name})
   and ((src in {source}) or (dst in {destination}))                                            |\n\n#####
-  Classifiers and Mappers\n\nThis integration supports a default Classifier (Panorama
+  Classifiers and Mappers\n \nThis integration supports a default Classifier (Panorama
   Classifier) and Mapper (Panorama Mapper) that handles incidents returned from the
-  API.\n\n---\n\n[View Integration Documentation](https://xsoar.pan.dev/docs/reference/integrations/panorama)\n"
+  API.\n\n---\n\n---\n[View Integration Documentation](https://xsoar.pan.dev/docs/reference/integrations/panorama)"
 display: Palo Alto Networks PAN-OS
 image: data:image/png;base64,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
 name: Panorama
@@ -1001,7 +1002,8 @@ script:
       isArray: true
       name: tags
     deprecated: true
-    description: Creates a service.
+    description: |
+      Creates a service. Note: overrides the service if it already exists.
     name: panorama-create-service
     outputs:
     - contextPath: Panorama.Services.Name
@@ -5308,6 +5310,9 @@ script:
   - arguments:
     - description: The serial number of the device.
       name: target
+    - defaultValue: running_config
+      description: Name of the file to save the configuration to.
+      name: filename
     description: Pull the running config file.
     name: pan-os-get-running-config
   - arguments:
@@ -8896,6 +8901,9 @@ script:
     - description: Serial number of the device from which to fetch the device state.
       name: target
       required: true
+    - description: Name of the file for the state file to be saved. Default will use
+        the hostname as the filename.
+      name: filename
     description: Get the device state from the provided device. Note; This will attempt
       to connect directly to the provided target to get the device state. If the IP
       address as reported in "show system info" is unreachable, this command will
@@ -9888,12 +9896,14 @@ script:
     description: Exports a tech support file (TSF).
     name: pan-os-export-tech-support-file
     polling: true
-  dockerimage: demisto/pan-os-python:1.0.0.80157
+  dockerimage: demisto/pan-os-python:1.0.0.87401
   isfetch: true
   runonce: false
   script: |
     register_module_line('Panorama', 'start', __line__())
-    ### pack version: 2.1.14
+    ### pack version: 2.1.22
+
+
 
 
     from collections import defaultdict
@@ -10312,7 +10322,13 @@ script:
                 dictionary[key] = dictionary[key]['#text']
             elif isinstance(dictionary[key], list) and isinstance(dictionary[key][0], dict) \
                     and dictionary[key][0].get('#text'):
-                dictionary[key] = [text.get('#text') for text in dictionary[key]]
+                temp_list = []
+                for text in dictionary[key]:
+                    if isinstance(text, dict):
+                        temp_list.append(text.get('#text'))
+                    elif isinstance(text, str):
+                        temp_list.append(text)
+                dictionary[key] = temp_list
 
         for value in dictionary.values():
             if isinstance(value, dict):
@@ -19662,8 +19678,8 @@ script:
         """
         serial: str
         connected: str
-        hostname: str
         last_commit_all_state_tpl: str
+        hostname: str = ""
         name: str = ""
 
         _output_prefix = OUTPUT_PREFIX + "TemplateStackOp"
@@ -21709,7 +21725,7 @@ script:
         )
 
 
-    def get_device_state(topology: Topology, target: str) -> dict:
+    def get_device_state(topology: Topology, target: str, filename: str = None) -> dict:
         """
         Get the device state from the provided device target (serial number). Note that this will attempt to connect directly to the
         firewall as there is no way to get the device state for a firewall via Panorama.
@@ -21717,8 +21733,13 @@ script:
         :param topology: `Topology` instance !no-auto-argument
         :param target: String to filter to only show specific hostnames or serial numbers.
         """
+        if not filename:
+            file_name = f"{target}_device_state.tar.gz"
+        else:
+            file_name = f"{target}_{filename}_device_state.tar.gz"
+
         return fileResult(
-            filename=f"{target}_device_state.tar.gz",
+            filename=file_name,
             data=FirewallCommand.get_device_state(topology, target),
             file_type=EntryType.ENTRY_INFO_FILE
         )
@@ -21826,9 +21847,14 @@ script:
 
         if args.get("target"):
             params["target"] = args.get("target")
-
+        file_name_arg = args.get("filename")
+        target = args.get("target")
+        if file_name_arg != 'running_config' and file_name_arg and target:
+            file_name = target + '_' + file_name_arg + '_running_config'
+        else:
+            file_name = file_name_arg
         result = http_request(URL, 'POST', params=params, is_xml=True)
-        return fileResult("running_config", result)
+        return fileResult(file_name, result)
 
 
     def pan_os_get_merged_config(args: dict):

@@ -2,7 +2,7 @@ contentitemexportablefields:
   contentitemfields:
     definitionid: ""
     fromServerVersion: 5.0.0
-    itemVersion: 2.4.35
+    itemVersion: 2.6.15
     packID: CommonPlaybooks
     packName: Common Playbooks
     packPropagationLabels:
@@ -75,6 +75,16 @@ inputs:
   required: false
   value:
     simple: "False"
+- description: |-
+    Whether to execute common logic, like the classification of IP addresses to ranges and resolving, in the the main (IP Enrichment - Generic v2) enrichment playbook, instead of in the sub-playbooks.
+    Possible values are: True, False.
+
+    Setting this to True and using the parent playbook will execute the relevant commands in the main playbook instead of executing them in both sub-playbooks, improving the performance of the playbook and reducing the overfall size of the incident.
+  key: ExecutedFromParent
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "False"
 name: IP Enrichment - External - Generic v2
 outputs:
 - contextPath: IP
@@ -93,10 +103,10 @@ outputs:
   description: A list of endpoint IP addresses.
   type: string
 - contextPath: IP.Address
-  description: The IP Address
+  description: The IP Address.
   type: string
 - contextPath: IP.InRange
-  description: Is the IP is in the input ranges? (could be 'yes' or 'no)
+  description: Is the IP in the input ranges? (could be 'yes' or 'no).
   type: string
 - contextPath: DBotScore.Indicator
   description: The indicator that was tested.
@@ -129,37 +139,37 @@ outputs:
   description: The vendor that reported the indicator as malicious.
   type: string
 - contextPath: IP.Malicious.Description
-  description: For malicious IPs, the reason that the vendor made the decision
+  description: For malicious IPs, the reason that the vendor made the decision.
   type: string
 - contextPath: IP.VirusTotal.DownloadedHashes
   description: Latest files that are detected by at least one antivirus solution and
-    were downloaded by VirusTotal from the IP address
+    were downloaded by VirusTotal from the IP address.
   type: string
 - contextPath: IP.VirusTotal.UnAVDetectedDownloadedHashes
   description: Latest files that are not detected by any antivirus solution and were
-    downloaded by VirusTotal from the IP address provided
+    downloaded by VirusTotal from the IP address provided.
   type: string
 - contextPath: IP.VirusTotal.DetectedURLs
   description: Latest URLs hosted in this IP address detected by at least one URL
-    scanner
+    scanner.
   type: string
 - contextPath: IP.VirusTotal.CommunicatingHashes
-  description: Latest detected files that communicate with this IP address
+  description: Latest detected files that communicate with this IP address.
   type: string
 - contextPath: IP.VirusTotal.UnAVDetectedCommunicatingHashes
-  description: Latest undetected files that communicate with this IP address
+  description: Latest undetected files that communicate with this IP address.
   type: string
 - contextPath: IP.VirusTotal.Resolutions.hostname
-  description: The following domains resolved to the given IP
+  description: The following domains resolved to the given IP.
   type: string
 - contextPath: IP.VirusTotal.ReferrerHashes
-  description: Latest detected files that embed this IP address in their strings
+  description: Latest detected files that embed this IP address in their strings.
   type: string
 - contextPath: IP.VirusTotal.UnAVDetectedReferrerHashes
-  description: Latest undetected files that embed this IP address in their strings
+  description: Latest undetected files that embed this IP address in their strings.
   type: string
 - contextPath: IP.VirusTotal.Resolutions.last_resolved
-  description: The last time the following domains resolved to the given IP
+  description: The last time the following domains resolved to the given IP.
   type: string
 starttaskid: "0"
 system: true
@@ -172,7 +182,7 @@ tasks:
     isoversize: false
     nexttasks:
       '#none#':
-      - "28"
+      - "47"
     note: false
     quietmode: 0
     separatecontext: false
@@ -189,8 +199,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 102.5,
-          "y": 59
+          "x": 550,
+          "y": 39
         }
       }
   "15":
@@ -257,8 +267,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 102.5,
-          "y": 550
+          "x": 552.5,
+          "y": 670
         }
       }
   "24":
@@ -284,8 +294,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": -600,
-          "y": 1720
+          "x": 110,
+          "y": 1970
         }
       }
   "27":
@@ -315,50 +325,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 102.5,
-          "y": 1090
-        }
-      }
-  "28":
-    conditions:
-    - condition:
-      - - left:
-            iscontext: true
-            value:
-              simple: inputs.IP
-          operator: isExists
-      label: "yes"
-    continueonerrortype: ""
-    id: "28"
-    ignoreworker: false
-    isautoswitchedtoquietmode: false
-    isoversize: false
-    nexttasks:
-      '#default#':
-      - "39"
-      "yes":
-      - "29"
-    note: false
-    quietmode: 0
-    separatecontext: false
-    skipunavailable: false
-    task:
-      brand: ""
-      description: Determine whether the playbook's input contains at least one IP
-        address.
-      id: 6b8d857a-6012-41ac-8133-999741963259
-      iscommand: false
-      name: Are there any IP addresses?
-      type: condition
-      version: -1
-    taskid: 6b8d857a-6012-41ac-8133-999741963259
-    timertriggers: []
-    type: condition
-    view: |-
-      {
-        "position": {
-          "x": 102.5,
-          "y": 195
+          "x": 100,
+          "y": 1240
         }
       }
   "29":
@@ -374,6 +342,8 @@ tasks:
     quietmode: 0
     reputationcalc: 1
     scriptarguments:
+      ignore-outputs:
+        simple: "false"
       ip:
         complex:
           root: inputs.IP
@@ -389,20 +359,20 @@ tasks:
       description: "Checks if the IP address is in the internal IP address ranges.\nIf
         internal, sets the \"InRange\" attribute to \"yes\".\nIf external, sets the
         \"InRange\" attribute to \"no\". "
-      id: 8b80f93a-be58-4f02-8568-23e5f4437b9f
+      id: ae5e40bb-17cb-4470-84bc-4801e67b1cae
       iscommand: false
       name: Determine whether the IP address is internal or external
       script: IsIPInRanges
       type: regular
       version: -1
-    taskid: 8b80f93a-be58-4f02-8568-23e5f4437b9f
+    taskid: ae5e40bb-17cb-4470-84bc-4801e67b1cae
     timertriggers: []
     type: regular
     view: |-
       {
         "position": {
-          "x": 102.5,
-          "y": 385
+          "x": 552.5,
+          "y": 505
         }
       }
   "34":
@@ -446,8 +416,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 102.5,
-          "y": 750
+          "x": 550,
+          "y": 870
         }
       }
   "35":
@@ -505,8 +475,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 460,
-          "y": 920
+          "x": 750,
+          "y": 1055
         }
       }
   "36":
@@ -535,8 +505,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 460,
-          "y": 1230
+          "x": 550,
+          "y": 1420
         }
       }
   "37":
@@ -599,8 +569,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 460,
-          "y": 1363
+          "x": 550,
+          "y": 1553
         }
       }
   "38":
@@ -618,18 +588,36 @@ tasks:
     scriptarguments:
       ip:
         complex:
-          accessor: Address
-          filters:
-          - - left:
+          root: .
+          transformers:
+          - operator: uniq
+          - args:
+              condition:
+                value:
+                  simple: lhs==rhs
+              conditionB: {}
+              conditionInBetween: {}
+              else:
                 iscontext: true
                 value:
-                  simple: IP.InRange
-              operator: isEqualString
-              right:
+                  simple: ${IP(val.InRange=="no").Address}
+              equals: {}
+              lhs:
+                iscontext: true
                 value:
-                  simple: "no"
-          root: IP
-          transformers:
+                  simple: inputs.ExecutedFromParent
+              lhsB: {}
+              options: {}
+              optionsB: {}
+              rhs:
+                value:
+                  simple: "True"
+              rhsB: {}
+              then:
+                iscontext: true
+                value:
+                  simple: inputs.IP
+            operator: If-Then-Else
           - operator: uniq
     separatecontext: false
     skipunavailable: true
@@ -637,20 +625,20 @@ tasks:
       brand: VirusTotal - Private API
       description: |
         Retrieves a report for a given IP address.
-      id: 19fff3fe-0e05-4ccf-80ad-c1938b9a7806
+      id: bf0fa0db-39d0-4074-8878-c38077334c7a
       iscommand: true
       name: Get IP report from VirusTotal Private API
       script: VirusTotal - Private API|||vt-private-get-ip-report
       type: regular
       version: -1
-    taskid: 19fff3fe-0e05-4ccf-80ad-c1938b9a7806
+    taskid: bf0fa0db-39d0-4074-8878-c38077334c7a
     timertriggers: []
     type: regular
     view: |-
       {
         "position": {
-          "x": 460,
-          "y": 1540
+          "x": 550,
+          "y": 1730
         }
       }
   "39":
@@ -679,8 +667,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": -600,
-          "y": 920
+          "x": 1270,
+          "y": 1240
         }
       }
   "44":
@@ -709,8 +697,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": -250,
-          "y": 1230
+          "x": -340,
+          "y": 1420
         }
       }
   "45":
@@ -730,27 +718,35 @@ tasks:
           root: inputs.extended_data
       ip:
         complex:
-          filters:
-          - - ignorecase: true
-              left:
+          root: .
+          transformers:
+          - args:
+              condition:
+                value:
+                  simple: lhs==rhs
+              conditionB: {}
+              conditionInBetween: {}
+              else:
                 iscontext: true
                 value:
-                  simple: IP.InRange
-              operator: isEqualString
-              right:
-                value:
-                  simple: "no"
-          - - left:
+                  simple: ${IP(val.InRange=="no").Address}
+              equals: {}
+              lhs:
                 iscontext: true
                 value:
-                  simple: IP.Address
-              operator: containsGeneral
-              right:
+                  simple: inputs.ExecutedFromParent
+              lhsB: {}
+              options: {}
+              optionsB: {}
+              rhs:
+                value:
+                  simple: "True"
+              rhsB: {}
+              then:
                 iscontext: true
                 value:
                   simple: inputs.IP
-          root: IP.Address
-          transformers:
+            operator: If-Then-Else
           - operator: uniq
       threat_model_association:
         complex:
@@ -760,20 +756,20 @@ tasks:
     task:
       brand: ""
       description: Checks the reputation of an IP address using all available integrations.
-      id: 9a9bf2b6-1c82-42a7-8e51-d78fef292cd6
+      id: 6495e988-b3a2-44ca-866d-8a847c7914f9
       iscommand: true
       name: Check Reputation
       script: '|||ip'
       type: regular
       version: -1
-    taskid: 9a9bf2b6-1c82-42a7-8e51-d78fef292cd6
+    taskid: 6495e988-b3a2-44ca-866d-8a847c7914f9
     timertriggers: []
     type: regular
     view: |-
       {
         "position": {
-          "x": -250,
-          "y": 1540
+          "x": -340,
+          "y": 1730
         }
       }
   "46":
@@ -817,8 +813,100 @@ tasks:
     view: |-
       {
         "position": {
-          "x": -250,
-          "y": 1363
+          "x": -340,
+          "y": 1553
+        }
+      }
+  "47":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: inputs.IP
+          operator: isNotEmpty
+          right:
+            value: {}
+      - - ignorecase: true
+          left:
+            iscontext: true
+            value:
+              simple: inputs.ExecutedFromParent
+          operator: isEqualString
+          right:
+            value:
+              simple: "True"
+      label: "Yes"
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.IP
+          operator: isNotEmpty
+      label: "No"
+    continueonerrortype: ""
+    id: "47"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "39"
+      "No":
+      - "48"
+      "Yes":
+      - "27"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Checks whether the playbook's input contains at least one IP address.
+      id: ea6c64c9-4852-47c9-8cfd-d6d6907037cf
+      iscommand: false
+      name: Are the IPs already classified?
+      type: condition
+      version: -1
+    taskid: ea6c64c9-4852-47c9-8cfd-d6d6907037cf
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 550,
+          "y": 170
+        }
+      }
+  "48":
+    continueonerrortype: ""
+    id: "48"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "29"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 2e4dbc75-e8f0-4478-8b16-523ba22e1621
+      iscommand: false
+      name: Classify & Resolve IPs
+      type: title
+      version: -1
+    taskid: 2e4dbc75-e8f0-4478-8b16-523ba22e1621
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 552.5,
+          "y": 370
         }
       }
 version: -1
@@ -826,22 +914,21 @@ view: |-
   {
     "linkLabelsPosition": {
       "15_34_yes": 0.58,
-      "15_39_#default#": 0.49,
-      "28_29_yes": 0.68,
-      "28_39_#default#": 0.35,
+      "15_39_#default#": 0.29,
       "34_27_#default#": 0.49,
       "34_35_yes": 0.53,
       "37_24_#default#": 0.28,
       "37_38_yes": 0.52,
       "46_24_#default#": 0.68,
-      "46_45_yes": 0.56
+      "46_45_yes": 0.56,
+      "47_39_#default#": 0.3
     },
     "paper": {
       "dimensions": {
-        "height": 1726,
-        "width": 1440,
-        "x": -600,
-        "y": 59
+        "height": 1996,
+        "width": 1990,
+        "x": -340,
+        "y": 39
       }
     }
   }

@@ -2,7 +2,7 @@ contentitemexportablefields:
   contentitemfields:
     definitionid: ""
     fromServerVersion: 5.0.0
-    itemVersion: 2.4.35
+    itemVersion: 2.6.15
     packID: CommonPlaybooks
     packName: Common Playbooks
     packPropagationLabels:
@@ -138,6 +138,12 @@ inputs:
     Whether to verify SSL certificates for URLs.
     Can be True or False.
   key: URLSSLVerification
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "False"
+- description: Whether to execute the reputation command on the indicator.
+  key: UseReputationCommand
   playbookInputQuery: null
   required: false
   value:
@@ -476,6 +482,8 @@ tasks:
     note: false
     quietmode: 0
     scriptarguments:
+      ExecutedFromParent:
+        simple: "True"
       IP:
         complex:
           root: inputs.IP
@@ -489,6 +497,12 @@ tasks:
       ResolveIP:
         complex:
           root: inputs.ResolveIP
+      UseReputationCommand:
+        simple: ${inputs.UseReputationCommand}
+      extended_data:
+        simple: "False"
+      threat_model_association:
+        simple: "False"
     separatecontext: true
     skipunavailable: false
     task:
@@ -550,6 +564,8 @@ tasks:
           root: inputs.SHA256
           transformers:
           - operator: uniq
+      UseReputationCommand:
+        simple: ${inputs.UseReputationCommand}
     separatecontext: true
     skipunavailable: false
     task:
@@ -596,7 +612,7 @@ tasks:
           transformers:
           - operator: uniq
       UseReputationCommand:
-        simple: "False"
+        simple: ${inputs.UseReputationCommand}
       VerifyURL:
         complex:
           root: inputs.URLSSLVerification
@@ -650,6 +666,8 @@ tasks:
           root: inputs.Domain
           transformers:
           - operator: uniq
+      UseReputationCommand:
+        simple: ${inputs.UseReputationCommand}
     separatecontext: true
     skipunavailable: false
     task:
@@ -707,6 +725,8 @@ tasks:
           root: inputs.InternalDomains
           transformers:
           - operator: uniq
+      UseReputationCommand:
+        simple: ${inputs.UseReputationCommand}
     separatecontext: true
     skipunavailable: false
     task:

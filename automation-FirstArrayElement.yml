@@ -13,7 +13,7 @@ contentitemexportablefields:
   contentitemfields:
     definitionid: ""
     fromServerVersion: 5.0.0
-    itemVersion: 1.2.41
+    itemVersion: 1.2.62
     packID: FiltersAndTransformers
     packName: Filters And Transformers
     packPropagationLabels:
@@ -21,7 +21,6 @@ contentitemexportablefields:
     prevname: ""
     propagationLabels: []
     toServerVersion: ""
-dockerimage: demisto/python3:3.10.12.63474
 enabled: true
 engineinfo: {}
 mainengineinfo: {}
@@ -30,31 +29,20 @@ pswd: ""
 runas: DBotWeakRole
 runonce: false
 script: |
-  register_module_line('FirstArrayElement', 'start', __line__())
-  ### pack version: 1.2.41
+  // pack version: 1.2.62
+  let value = args.value;
 
+  if (Array.isArray(value) && value.length > 0) {
+      value = value[0];
+  } else if (value === null) {
+      value = [];
+  }
 
-
-  def main():
-      value = demisto.args()['value']
-
-      if isinstance(value, list) and value:
-          value = value[0]
-      elif value is None:
-          value = []
-
-      demisto.results(value)
-
-
-  if __name__ == "__builtin__" or __name__ == "builtins":
-      main()
-
-  register_module_line('FirstArrayElement', 'end', __line__())
+  return value;
 scripttarget: 0
-subtype: python3
 system: true
 tags:
 - general
 - transformer
 - entirelist
-type: python
+type: javascript
