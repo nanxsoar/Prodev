@@ -39,7 +39,7 @@ contentitemexportablefields:
   contentitemfields:
     definitionid: ""
     fromServerVersion: 5.5.0
-    itemVersion: 1.33.35
+    itemVersion: 1.33.37
     packID: Base
     packName: Base
     packPropagationLabels:
@@ -57,7 +57,7 @@ runas: DBotWeakRole
 runonce: false
 script: |
   register_module_line('SanePdfReports', 'start', __line__())
-  ### pack version: 1.33.35
+  ### pack version: 1.33.37
 
 
 

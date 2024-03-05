@@ -6,7 +6,7 @@ contentitemexportablefields:
   contentitemfields:
     definitionid: ""
     fromServerVersion: 5.0.0
-    itemVersion: 1.33.35
+    itemVersion: 1.33.37
     packID: Base
     packName: Base
     packPropagationLabels:
@@ -22,7 +22,7 @@ pswd: ""
 runas: DBotWeakRole
 runonce: false
 script: |
-  ### pack version: 1.33.35
+  ### pack version: 1.33.37
   """Common functions script
   This script will be appended to each server script before being executed.
   Please notice that to add custom common code, add it to the CommonServerUserPython script.
@@ -9473,7 +9473,7 @@ script: |
                             ''.format(version, str(ve), CONTEXT_UPDATE_RETRY_TIMES - attempt))
               # Sleep for a random time
               time_to_sleep = randint(1, 100) / 1000
-              time.sleep(time_to_sleep)
+              time.sleep(time_to_sleep)  # pylint: disable=E9003
 
 
   def get_integration_context_with_version(sync=True):
